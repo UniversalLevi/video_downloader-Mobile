@@ -6,21 +6,13 @@ import org.junit.Assert.*
 class SimpleTest {
     @Test
     fun testBasicCompilation() {
-        // Test that our basic classes can be instantiated
         val downloadState = DownloadState()
         assertNotNull(downloadState)
-        
         val videoInfo = VideoInfo(
             title = "Test",
-            duration = 100L,
-            uploader = "Test",
-            viewCount = 1000L,
-            thumbnail = "",
-            formats = 1
+            url = "https://example.com/video.mp4"
         )
         assertNotNull(videoInfo)
-        
-        // Test that we can access our utility classes
         assertNotNull(PermissionHandler)
         assertNotNull(ClipboardManager)
     }

@@ -1,5 +1,11 @@
 package com.example.hehedownloader.ui.screens
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +31,21 @@ fun DownloadScreen(
     val downloadState by viewModel.downloadState.collectAsState()
     var url by remember { mutableStateOf("") }
     var hasPermission by remember { mutableStateOf(PermissionHandler.hasStoragePermission(context)) }
+    
+    // Permission launcher for Android 10 and below
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.values.all { it }
+        hasPermission = allGranted
+    }
+    
+    // Settings launcher for Android 11+
+    val settingsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        hasPermission = PermissionHandler.hasStoragePermission(context)
+    }
     
     HeheDownloaderTheme {
         Surface(
@@ -78,6 +99,23 @@ fun DownloadScreen(
                                 text = "Please grant storage permission to save downloaded videos to your Downloads folder.",
                                 style = MaterialTheme.typography.bodySmall
                             )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = {
+                                    if (PermissionHandler.isLegacyStorage()) {
+                                        // For Android 10 and below, request runtime permissions
+                                        permissionLauncher.launch(PermissionHandler.getRequiredPermissions())
+                                    } else {
+                                        // For Android 11+, open settings
+                                        PermissionHandler.getStoragePermissionIntent()?.let { intent ->
+                                            settingsLauncher.launch(intent)
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text("Grant Permission")
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -137,27 +175,15 @@ fun DownloadScreen(
                             modifier = Modifier.padding(16.dp)
                         ) {
                             Text(
-                                text = videoInfo.title,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
+                                text = "Video URL:",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "By: ${videoInfo.uploader}",
+                                text = videoInfo.url,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Duration: ${formatDuration(videoInfo.duration)}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Views: ${formatViewCount(videoInfo.viewCount)}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
@@ -168,7 +194,7 @@ fun DownloadScreen(
                     Button(
                         onClick = {
                             if (url.isNotBlank()) {
-                                viewModel.downloadVideo(url)
+                                viewModel.downloadRealVideo(url)
                             }
                         },
                         enabled = hasPermission && !downloadState.isDownloading,

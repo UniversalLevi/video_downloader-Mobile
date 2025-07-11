@@ -2,9 +2,12 @@ package com.example.hehedownloader
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.Settings
 import androidx.core.content.ContextCompat
 
 object PermissionHandler {
@@ -37,5 +40,20 @@ object PermissionHandler {
     
     fun isLegacyStorage(): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.R
+    }
+    
+    fun getStoragePermissionIntent(): Intent? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // For Android 11+, direct user to storage settings
+            Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+                data = Uri.parse("package:com.example.hehedownloader")
+            }
+        } else {
+            null
+        }
+    }
+    
+    fun needsStoragePermissionRequest(): Boolean {
+        return true // Always need to request for our use case
     }
 } 

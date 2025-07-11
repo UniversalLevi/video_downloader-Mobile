@@ -3,14 +3,9 @@ package com.example.hehedownloader
 import org.junit.Test
 import org.junit.Assert.*
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
+class DownloadTest {
     @Test
-    fun testDownloadStateCreation() {
+    fun testDownloadState() {
         val downloadState = DownloadState()
         assertFalse(downloadState.isLoading)
         assertFalse(downloadState.isDownloading)
@@ -22,7 +17,7 @@ class ExampleUnitTest {
     }
     
     @Test
-    fun testVideoInfoCreation() {
+    fun testVideoInfo() {
         val videoInfo = VideoInfo(
             title = "Test Video",
             url = "https://example.com/video.mp4"
@@ -32,13 +27,9 @@ class ExampleUnitTest {
     }
     
     @Test
-    fun testBasicFunctionality() {
-        // Test that our basic classes can be instantiated
-        val permissionHandler = PermissionHandler
-        val clipboardManager = ClipboardManager
-        
-        // These should not throw any exceptions
-        assertNotNull(permissionHandler)
-        assertNotNull(clipboardManager)
+    fun testFileOperations() {
+        val fileName = "test_video_${System.currentTimeMillis()}.mp4"
+        assertNotNull(fileName)
+        assertTrue(fileName.contains(".mp4"))
     }
-}
+} 
