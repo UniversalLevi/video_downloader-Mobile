@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HeheDownloader</string>
+    <string name="app_description">Download videos from YouTube, Facebook, Twitter &amp; more</string>
+    <string name="enter_url">Enter video URL</string>
+    <string name="url_placeholder">https://youtube.com/watch?v=...</string>
+    <string name="paste">Paste</string>
+    <string name="get_video_info">Get Video Info</string>
+    <string name="download_video">Download Video</string>
+    <string name="downloading">Downloading...</string>
+    <string name="storage_permission_required">Storage Permission Required</string>
+    <string name="storage_permission_message">Please grant storage permission to save downloaded videos to your Downloads folder.</string>
+    <string name="download_success">Video downloaded successfully! Check your Downloads folder.</string>
+    <string name="supported_platforms">Supported Platforms</string>
+    <string name="platforms_list">• YouTube\n• Facebook\n• Twitter\n• Instagram\n• TikTok\n• And 100+ more sites</string>
+</resources>
